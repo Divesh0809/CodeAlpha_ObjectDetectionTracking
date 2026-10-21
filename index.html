@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VisionAI | Object Detection Studio</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b1020;
+            color: #f1f5f9;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+
+        .sidebar {
+            width: 245px;
+            background: #10172a;
+            padding: 28px 18px;
+            border-right: 1px solid #263149;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .logo span {
+            color: #818cf8;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 40px;
+        }
+
+        .menu-title {
+            font-size: 11px;
+            color: #64748b;
+            margin: 25px 12px 12px;
+            letter-spacing: 2px;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 14px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            color: #aab6cc;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .nav-item.active,
+        .nav-item:hover {
+            background: #252c50;
+            color: #a5b4fc;
+        }
+
+        .status {
+            margin-top: 45px;
+            padding: 15px;
+            background: #172238;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #aab6cc;
+        }
+
+        .status strong {
+            color: #4ade80;
+        }
+
+        /* Main content */
+
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .topbar h2 {
+            font-size: 25px;
+        }
+
+        .topbar p {
+            color: #94a3b8;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        .badge {
+            background: #192b35;
+            color: #4ade80;
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-size: 12px;
+        }
+
+        .welcome {
+            background: linear-gradient(120deg, #242b57, #171e35);
+            padding: 28px;
+            border: 1px solid #353e6b;
+            border-radius: 18px;
+            margin-bottom: 28px;
+        }
+
+        .welcome h1 {
+            font-size: 27px;
+            margin-bottom: 12px;
+        }
+
+        .welcome p {
+            color: #bdc7dc;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .section-heading {
+            font-size: 18px;
+            margin-bottom: 18px;
+        }
+
+        /* Statistics cards */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: #131b2e;
+            border: 1px solid #27334b;
+            border-radius: 15px;
+            padding: 23px;
+        }
+
+        .card-label {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        .card-value {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 9px;
+        }
+
+        .card-note {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        /* Workspace */
+
+        .workspace {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.8fr);
+            gap: 20px;
+        }
+
+        .panel {
+            background: #131b2e;
+            border: 1px solid #27334b;
+            border-radius: 16px;
+            padding: 24px;
+            min-width: 0;
+        }
+
+        .panel h3 {
+            font-size: 17px;
+            margin-bottom: 10px;
+        }
+
+        .panel-description {
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 22px;
+        }
+
+        .upload-box {
+            border: 1px dashed #56648a;
+            background: #0e1629;
+            border-radius: 13px;
+            padding: 32px 15px;
+            text-align: center;
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            margin-bottom: 14px;
+        }
+
+        .upload-box h4 {
+            margin-bottom: 10px;
+        }
+
+        .upload-box p {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+        button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 13px 20px;
+            width: 100%;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #4f46e5;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .feature {
+            padding: 16px 0;
+            border-bottom: 1px solid #27334b;
+        }
+
+        .feature:last-child {
+            border-bottom: none;
+        }
+
+        .feature h4 {
+            font-size: 14px;
+            margin-bottom: 7px;
+        }
+
+        .feature p {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background: #102b29;
+            border: 1px solid #23645a;
+            border-radius: 13px;
+        }
+
+        .result h3 {
+            color: #6ee7b7;
+            margin-bottom: 18px;
+        }
+
+        .result-stats {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .result-stats strong {
+            display: block;
+            font-size: 25px;
+            margin-bottom: 5px;
+        }
+
+        .result-stats span {
+            color: #a7c9c0;
+            font-size: 12px;
+        }
+
+        .result video {
+            width: 100%;
+            max-height: 430px;
+            background: #000;
+            border-radius: 10px;
+        }
+
+        .alert {
+            background: #422020;
+            color: #fecaca;
+            border: 1px solid #7f3333;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        footer {
+            color: #64748b;
+            text-align: center;
+            font-size: 12px;
+            margin-top: 35px;
+        }
+
+        @media (max-width: 1050px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 18px;
+            }
+
+            .subtitle,
+            .menu-title,
+            .status {
+                display: none;
+            }
+
+            .sidebar nav {
+                display: flex;
+                gap: 6px;
+                overflow-x: auto;
+                margin-top: 15px;
+            }
+
+            .nav-item {
+                white-space: nowrap;
+                padding: 10px;
+                margin: 0;
+            }
+
+            .main {
+                padding: 18px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .welcome h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="logo">◈ Vision<span>AI</span></div>
+
+        <div class="subtitle">INTELLIGENT VISION PLATFORM</div>
+
+        <div class="menu-title">WORKSPACE</div>
+
+        <nav>
+            <a class="nav-item active" href="#overview">▦ Overview</a>
+            <a class="nav-item" href="#detection">◎ Detection Studio</a>
+            <a class="nav-item" href="#analytics">▥ Analytics</a>
+        </nav>
+
+        <div class="status">
+            <p style="margin-bottom: 12px;">AI ENGINE</p>
+            <strong>● YOLO Detection</strong>
+            <p style="margin-top: 8px;">Object tracking enabled</p>
+        </div>
+
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+            <div>
+                <h2 id="overview">Dashboard Overview</h2>
+                <p>Monitor your AI object detection workspace.</p>
+            </div>
+
+            <div class="badge">● VisionAI Workspace</div>
+        </header>
+
+        <section class="welcome">
+            <h1>Welcome to VisionAI 👋</h1>
+            <p>
+                Detect, identify and track objects in videos using AI.
+                Upload a video to begin your detection session and
+                explore the processed results.
+            </p>
+        </section>
+
+        <h3 class="section-heading" id="analytics">Detection Analytics</h3>
+
+        <section class="stats">
+
+            <div class="card">
+                <div class="card-label">Total Detections</div>
+                <div class="card-value">
+                    {{ total_detections if total_detections is not none else '--' }}
+                </div>
+                <div class="card-note">Objects detected across processed frames</div>
+            </div>
+
+            <div class="card">
+                <div class="card-label">Unique Tracked Objects</div>
+                <div class="card-value">
+                    {{ unique_objects if unique_objects is not none else '--' }}
+                </div>
+                <div class="card-note">Unique tracking IDs observed</div>
+            </div>
+
+            <div class="card">
+                <div class="card-label">Detection Engine</div>
+                <div class="card-value" style="font-size: 24px;">YOLO</div>
+                <div class="card-note">AI-powered object detection</div>
+            </div>
+
+        </section>
+
+        {% if request.args.get('error') %}
+        <div class="alert">
+            {{ request.args.get('error') }}
+        </div>
+        {% endif %}
+        <section class="panel" id="object-analytics" style="margin-bottom: 28px;">
+
+```
+<h3>📊 Object Detection Analytics</h3>
+
+<p class="panel-description">
+    Visual breakdown of detected objects across video frames.
+</p>
+
+{% if class_counts %}
+
+<div style="position: relative; height: 320px; width: 100%;">
+    <canvas id="objectChart"></canvas>
+</div>
+
+<script>
+    const objectLabels = {{ class_counts.keys() | list | tojson }};
+    const objectValues = {{ class_counts.values() | list | tojson }};
+
+    const chartCanvas = document.getElementById("objectChart");
+
+    new Chart(chartCanvas, {
+        type: "bar",
+
+        data: {
+            labels: objectLabels,
+
+            datasets: [{
+                label: "Detections",
+                data: objectValues,
+                borderWidth: 1,
+                borderRadius: 6
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "#e2e8f0"
+                    }
+                }
+            },
+
+            scales: {
+                x: {
+                    ticks: {
+                        color: "#cbd5e1"
+                    },
+                    grid: {
+                        color: "#27334b"
+                    }
+                },
+
+                y: {
+                    beginAtZero: true,
+
+                    ticks: {
+                        color: "#cbd5e1",
+                        precision: 0
+                    },
+
+                    grid: {
+                        color: "#27334b"
+                    }
+                }
+            }
+        }
+    });
+    /* VisionAI Professional UI Upgrade */
+
+html {
+    scroll-behavior: smooth;
+}
+
+.card,
+.panel,
+.object-card {
+    transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.card:hover,
+.panel:hover,
+.object-card:hover {
+    transform: translateY(-4px);
+    border-color: #6366f1;
+}
+
+.welcome {
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome h1 {
+    letter-spacing: -0.5px;
+}
+
+.section-heading {
+    letter-spacing: 0.3px;
+}
+
+.nav-item {
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+input[type="file"] {
+    padding: 12px;
+    background: #131b2e;
+    border: 1px solid #34415c;
+    border-radius: 8px;
+}
+
+button,
+.download-btn {
+    transition: all 0.2s ease;
+}
+
+button:hover,
+.download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 18px rgba(99, 102, 241, 0.25);
+}
+
+.result {
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .main {
+        padding: 18px;
+    }
+
+    .welcome {
+        padding: 22px;
+    }
+
+    .card-value {
+        font-size: 25px;
+    }
+}
+</script>
+
+{% else %}
+
+<p style="color: #94a3b8;">
+    Upload a video and run detection to view analytics.
+</p>
+
+{% endif %}
+```
+
+</section>
+
+
+        <h3 class="section-heading" id="detection">Detection Studio</h3>
+
+        <section class="workspace">
+
+            <div class="panel">
+
+                <h3>🎬 Video Detection</h3>
+
+                <p class="panel-description">
+                    Upload a video file to detect objects, draw bounding
+                    boxes and track objects using unique IDs.
+                </p>
+
+                <form action="{{ url_for('detect') }}"
+                      method="POST"
+                      enctype="multipart/form-data"
+                      id="uploadForm">
+
+                    <div class="upload-box">
+
+                        <div class="upload-icon">📁</div>
+
+                        <h4>Select Your Video</h4>
+
+                        <p>Choose a supported video file up to 200 MB.</p>
+
+                        <input
+                            type="file"
+                            name="video"
+                            id="videoInput"
+                            accept="video/*"
+                            required
+                        >
+
+                        <button type="submit" id="detectButton">
+                            ▶ Start Object Detection
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="panel">
+
+                <h3>AI Capabilities</h3>
+
+                <p class="panel-description">
+                    Tools available in your detection workspace.
+                </p>
+
+                <div class="feature">
+                    <h4>🎯 Object Detection</h4>
+                    <p>Identify supported objects in video frames.</p>
+                </div>
+
+                <div class="feature">
+                    <h4>📦 Bounding Boxes</h4>
+                    <p>Visualize detected objects with labeled boxes.</p>
+                </div>
+
+                <div class="feature">
+                    <h4>🔍 Object Tracking</h4>
+                    <p>Follow detected objects with tracking IDs.</p>
+                </div>
+
+                <div class="feature">
+                    <h4>📊 Detection Analytics</h4>
+                    <p>Review detection totals and tracked object counts.</p>
+                </div>
+
+            </div>
+
+        </section>
+
+        {% if result_video %}
+
+        <section class="result">
+
+            <h3>✓ Detection Completed</h3>
+
+            <div class="result-stats">
+                <style>
+    .object-breakdown {
+        margin: 24px 0;
+    }
+
+    .object-breakdown h4 {
+        margin-bottom: 15px;
+        font-size: 16px;
+        color: #e2e8f0;
+    }
+
+    .object-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 12px;
+    }
+
+    .object-card {
+        background: #172238;
+        border: 1px solid #34415c;
+        border-radius: 12px;
+        padding: 17px;
+    }
+
+    .object-name {
+        color: #a5b4fc;
+        font-size: 13px;
+        text-transform: capitalize;
+        margin-bottom: 10px;
+    }
+
+    .object-count {
+        font-size: 27px;
+        font-weight: bold;
+        color: #ffffff;
+    }
+
+    .object-caption {
+        color: #94a3b8;
+        font-size: 11px;
+        margin-top: 7px;
+    }
+</style>
+
+<div class="object-breakdown">
+    <h4>🎯 Object Classification</h4>
+
+```
+<div class="object-grid">
+    {% if class_counts %}
+        {% for name, count in class_counts|dictsort %}
+            <div class="object-card">
+                <div class="object-name">{{ name }}</div>
+                <div class="object-count">{{ count }}</div>
+                <div class="object-caption">
+                    Detections across frames
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No objects detected.</p>
+    {% endif %}
+</div>
+```
+
+</div>
+
+
+                <div>
+                    <strong>{{ total_detections }}</strong>
+                    <span>Total detections across frames</span>
+                </div>
+
+                <div>
+                    <strong>{{ unique_objects }}</strong>
+                    <span>Unique tracked IDs</span>
+                </div>
+
+            </div>
+
+            <video controls>
+                <source src="{{ result_video }}" type="video/x-msvideo">
+                Your browser cannot play this video format.
+            </video>
+            <a href="{{ result_video }}"
+download="VisionAI_Detection_Result.avi"
+class="download-btn">
+⬇ Download Processed Video </a>
+
+<style>
+    .download-btn {
+        display: inline-block;
+        margin-top: 18px;
+        padding: 13px 20px;
+        background: #6366f1;
+        color: white;
+        text-decoration: none;
+        border-radius: 9px;
+        font-size: 14px;
+        font-weight: bold;
+        transition: background 0.2s;
+    }
+
+    .download-btn:hover {
+        background: #4f46e5;
+    }
+</style>
+
+            <p style="margin-top: 12px; font-size: 12px; color: #a7c9c0;">
+                If the video does not play in your browser, we can
+                adjust the output format in the next step.
+            </p>
+
+        </section>
+
+        {% endif %}
+
+        <footer>
+            VisionAI · AI Object Detection & Tracking System
+        </footer>
+
+    </main>
+
+</div>
+
+<script>
+    const uploadForm = document.getElementById("uploadForm");
+    const videoInput = document.getElementById("videoInput");
+    const detectButton = document.getElementById("detectButton");
+
+    uploadForm.addEventListener("submit", function(event) {
+        if (!videoInput.files.length) {
+            event.preventDefault();
+            alert("Please select a video first.");
+            return;
+        }
+
+        const file = videoInput.files[0];
+        const maxSize = 200 * 1024 * 1024;
+
+        if (file.size > maxSize) {
+            event.preventDefault();
+            alert("Video must be smaller than 200 MB.");
+            return;
+        }
+
+        detectButton.disabled = true;
+        detectButton.textContent = "Processing video... Please wait";
+    });
+</script>
+
+</body>
+</html>

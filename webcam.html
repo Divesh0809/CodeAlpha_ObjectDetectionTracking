@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VisionAI | Live Detection</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b1020;
+            color: #f1f5f9;
+            padding: 25px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #818cf8;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            background: #1e293b;
+            color: white;
+            padding: 12px 17px;
+            border-radius: 8px;
+        }
+
+        .hero {
+            background: linear-gradient(120deg, #242b57, #171e35);
+            border: 1px solid #353e6b;
+            padding: 28px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+        }
+
+        .hero h1 {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            color: #bdc7dc;
+            line-height: 1.7;
+        }
+
+        .panel {
+            background: #131b2e;
+            border: 1px solid #27334b;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 22px;
+        }
+
+        .panel h2 {
+            font-size: 19px;
+            margin-bottom: 12px;
+        }
+
+        .description {
+            color: #94a3b8;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .camera-screen {
+            width: 100%;
+            min-height: 300px;
+            background: #070b14;
+            border: 1px solid #34415c;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .camera-screen img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .placeholder {
+            text-align: center;
+            padding: 30px;
+            color: #94a3b8;
+        }
+
+        .camera-icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        button {
+            border: none;
+            padding: 13px 22px;
+            border-radius: 9px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .start {
+            background: #6366f1;
+            color: white;
+        }
+
+        .stop {
+            background: #7f1d1d;
+            color: white;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status {
+            display: inline-block;
+            background: #172238;
+            color: #fbbf24;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .info-card {
+            background: #172238;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #27334b;
+        }
+
+        .info-card h3 {
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .info-card p {
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .warning {
+            color: #fcd34d;
+            font-size: 13px;
+            margin-top: 18px;
+            line-height: 1.7;
+        }
+
+        footer {
+            text-align: center;
+            color: #64748b;
+            font-size: 12px;
+            padding: 25px 0;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 15px;
+            }
+
+            .header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 23px;
+            }
+
+            .camera-screen {
+                min-height: 220px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="header">
+        <div class="logo">◈ Vision<span>AI</span></div>
+
+        <a href="/" class="back-btn">← Back to Dashboard</a>
+    </header>
+
+    <section class="hero">
+        <h1>📷 Live Object Detection</h1>
+
+        <p>
+            Detect and track objects directly from your webcam using
+            YOLO AI and ByteTrack. Start the camera to view live
+            detection results with bounding boxes.
+        </p>
+    </section>
+
+    <section class="panel">
+
+        <h2>🎥 Webcam Studio</h2>
+
+        <p class="description">
+            Start the webcam to detect supported objects in real time.
+            Tracking IDs will appear when the AI tracker identifies them.
+        </p>
+
+        <div class="camera-screen" id="cameraScreen">
+
+            <div class="placeholder" id="placeholder">
+                <div class="camera-icon">📷</div>
+                <h3>Camera is not running</h3>
+                <p style="margin-top: 10px;">
+                    Click Start Webcam to begin detection.
+                </p>
+            </div>
+
+            <img
+                id="cameraFeed"
+                alt="Live AI object detection"
+                hidden
+            >
+
+        </div>
+
+        <div class="buttons">
+
+            <button class="start" id="startButton" type="button">
+                ▶ Start Webcam
+            </button>
+
+            <button class="stop" id="stopButton" type="button" disabled>
+                ■ Stop Webcam
+            </button>
+
+        </div>
+
+        <div class="status" id="status">
+            ● Camera stopped
+        </div>
+
+        <p class="warning">
+            Note: Webcam detection runs on the computer hosting the
+            Flask application. Close other apps using the webcam if
+            the camera cannot open.
+        </p>
+
+    </section>
+
+    <section class="panel">
+
+        <h2>AI Detection Features</h2>
+
+        <div class="info-grid">
+
+            <div class="info-card">
+                <h3>🎯 Object Detection</h3>
+                <p>
+                    Detect supported objects in the live camera feed.
+                </p>
+            </div>
+
+            <div class="info-card">
+                <h3>📦 Bounding Boxes</h3>
+                <p>
+                    Display labeled boxes around detected objects.
+                </p>
+            </div>
+
+            <div class="info-card">
+                <h3>🔍 Object Tracking</h3>
+                <p>
+                    Track objects with IDs when tracking data is available.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+    <footer>
+        VisionAI · AI Object Detection & Tracking System
+    </footer>
+
+</div>
+
+<script>
+    const cameraFeed = document.getElementById("cameraFeed");
+    const placeholder = document.getElementById("placeholder");
+    const startButton = document.getElementById("startButton");
+    const stopButton = document.getElementById("stopButton");
+    const statusText = document.getElementById("status");
+
+    function startWebcam() {
+        cameraFeed.hidden = false;
+        placeholder.hidden = true;
+
+        startButton.disabled = true;
+        stopButton.disabled = false;
+
+        statusText.textContent = "● Connecting to webcam...";
+        statusText.style.color = "#fbbf24";
+
+        cameraFeed.src = "/webcam_feed?t=" + Date.now();
+    }
+
+    function stopWebcam() {
+        cameraFeed.src = "";
+        cameraFeed.hidden = true;
+        placeholder.hidden = false;
+
+        startButton.disabled = false;
+        stopButton.disabled = true;
+
+        statusText.textContent = "● Camera stopped";
+        statusText.style.color = "#fbbf24";
+    }
+
+    cameraFeed.onload = function() {
+        statusText.textContent = "● Webcam detection active";
+        statusText.style.color = "#4ade80";
+    };
+
+    cameraFeed.onerror = function() {
+        if (!startButton.disabled) {
+            return;
+        }
+
+        cameraFeed.removeAttribute("src");
+        cameraFeed.hidden = true;
+        placeholder.hidden = false;
+
+        startButton.disabled = false;
+        stopButton.disabled = true;
+
+        statusText.textContent =
+            "Camera feed failed. Check the Flask terminal.";
+
+        statusText.style.color = "#f87171";
+    };
+
+    startButton.addEventListener("click", startWebcam);
+    stopButton.addEventListener("click", stopWebcam);
+
+    window.addEventListener("beforeunload", function() {
+        cameraFeed.src = "";
+    });
+</script>
+
+</body>
+</html>
